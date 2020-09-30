@@ -7,9 +7,6 @@ class Users {
   static async signUp(req, res) {
 
     const { username, email, role, firstname, lastname, password } = req.body
-    if (!Helper.isValidEmail(req.body.email)) {
-      return res.status(400).send({ 'message': 'Please enter a valid email address' });
-    }
     const hashPassword = Helper.hashPassword(password);
     try {
       const findUser = await User.findOne({
@@ -120,6 +117,28 @@ class Users {
     }
   }
 
+  static async updateUser(req, res) {
+    try {
+      const data = await User.findOne({ where: { id: req.params.id } });
+      const { username, email, role, firstname, lastname, password } = req.body
+      const hashPassword = Helper.hashPassword(password);
+      const updated = await data.update({
+        firstname: firstname || data.dataValues.firstname,
+        lastname: lastname || data.dataValues.lastname,
+        role: role || data.dataValues.role,
+        username: username || data.dataValues.username,
+        password: hashPassword || data.dataValues.password,
+        email: email || data.dataValues.email,
+      });
+      return res.status(200).json({
+        user: updated
+      });
+    } catch (error) {
+      return res.status(400).json({
+        message: error.message
+      });
+    }
+  }
   static async deleteUser(req, res) {
     try {
       const id = req.params.id

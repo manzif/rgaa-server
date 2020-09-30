@@ -7,6 +7,7 @@ const route = express.Router();
 route.post('/', verifyUser.isAdmin, users.signUp);
 route.get('/', verifyUser.isAdmin, users.getAllusers);
 route.delete('/users/:id', verifyUser.isAdmin, users.deleteUser);
+route.patch('/users/:id', verifyUser.isAdmin, users.updateUser);
 route.post('/login', users.login);
 
 export default route;
