@@ -8,7 +8,7 @@
     "dev": "nodemon --exec babel-node ./src/app.js",
     "drop_tables": "sequelize db:migrate:undo:all",
     "create_tables": "sequelize db:migrate && sequelize db:seed:all",
-    "start": "node build/server.js",
+    "start": "node build/app.js",
     "build": "yarn create_tables && babel src --out-dir build"
   },
   "dependencies": {
