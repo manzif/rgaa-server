@@ -67,7 +67,7 @@ class ContactManager {
                     subject,
                     message
                 })
-            return res.status(201).send({ response: 'Contact successfully created', name, email, subject, message });
+            return res.status(201).send({ response: 'Contact successfully created', name, email, subject, message, status: 201 });
         } catch (error) {
             return res.status(400).json({
                 status: 400,

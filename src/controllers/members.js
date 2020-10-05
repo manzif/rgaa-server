@@ -20,7 +20,7 @@ class MemberManager {
                 message: error.message
             });
         }
-        
+
     }
 
 
@@ -28,16 +28,16 @@ class MemberManager {
         try {
             const data = await Member.findOne({ where: { id: req.params.id } });
             const updated = await data.update({
-              name: req.body.name || data.dataValues.name,
-              type: req.body.type || data.dataValues.type,
-              website: req.body.website || data.dataValues.website,
-              owner: req.body.owner || data.dataValues.owner,
-              email: req.body.email || data.dataValues.email,
-              phonenumber: req.body.phonenumber || data.dataValues.phonenumber,
-              address: req.body.address || data.dataValues.address
+                name: req.body.name || data.dataValues.name,
+                type: req.body.type || data.dataValues.type,
+                website: req.body.website || data.dataValues.website,
+                owner: req.body.owner || data.dataValues.owner,
+                email: req.body.email || data.dataValues.email,
+                phonenumber: req.body.phonenumber || data.dataValues.phonenumber,
+                address: req.body.address || data.dataValues.address
             });
             return res.status(200).json({
-              member: updated
+                member: updated
             });
         } catch (error) {
             return res.status(400).json({
@@ -51,8 +51,8 @@ class MemberManager {
         try {
             const findMembers = await Member.findAll();
             let casino = 0
-            let Sports  = 0
-            let Gaming  = 0
+            let Sports = 0
+            let Gaming = 0
             let Internet = 0
             let lottery = 0
             if (findMembers) {
@@ -103,7 +103,7 @@ class MemberManager {
                     phonenumber,
                     address
                 })
-            return res.status(201).send({ message: 'Member successfully created', name, type, website, owner, email, phonenumber, address });
+            return res.status(201).send({ message: 'Member successfully created', status: 201, name, type, website, owner, email, phonenumber, address });
         } catch (error) {
             return res.status(400).json({
                 status: 400,
@@ -113,23 +113,23 @@ class MemberManager {
     }
 
     static async deleteMember(req, res) {
-            try {
-                const id = req.params.id
-                const member = await Member.findOne({ where: { id } });
-                if (member) {
-                    await Member.destroy({ where: { id } })
-                    return res.status(200).json({
-                        message: 'Member deleted successfuly'
-                    });
-                }
-                return res.status(404).json({
-                    message: 'Application does not exist'
-                });
-            } catch (error) {
-                return res.status(400).json({
-                    message: error.message
+        try {
+            const id = req.params.id
+            const member = await Member.findOne({ where: { id } });
+            if (member) {
+                await Member.destroy({ where: { id } })
+                return res.status(200).json({
+                    message: 'Member deleted successfuly'
                 });
             }
+            return res.status(404).json({
+                message: 'Application does not exist'
+            });
+        } catch (error) {
+            return res.status(400).json({
+                message: error.message
+            });
+        }
     }
 
 }

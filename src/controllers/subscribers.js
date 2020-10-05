@@ -1,4 +1,5 @@
 import model from '../db/models';
+import Helper from '../helper/helper';
 
 const { Subscriber } = model;
 
@@ -35,6 +36,9 @@ class SubscriberManager {
 
     static async addSubscriber(req, res) {
         const { email } = req.body
+        if (!Helper.isValidEmail(email)) {
+            return res.status(400).send({ 'message': 'Please enter a valid email address' });
+        }
 
         try {
             const findSubscriber = await Subscriber.findOne({
@@ -49,7 +53,7 @@ class SubscriberManager {
                 .create({
                     email
                 })
-            return res.status(201).send({ message: 'Subscriber successfully created', email });
+            return res.status(201).send({ message: 'Subscriber successfully created', email, status: 201 });
         } catch (error) {
             return res.status(400).json({
                 status: 400,

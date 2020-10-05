@@ -120,7 +120,11 @@ class Users {
   static async updateUser(req, res) {
     try {
       const data = await User.findOne({ where: { id: req.params.id } });
+      const oldPassword = data.dataValues.password
+      
       const { username, email, role, firstname, lastname, password } = req.body
+      if (Helper.comparePassword(oldPassword, password)) {
+      }
       const hashPassword = Helper.hashPassword(password);
       const updated = await data.update({
         firstname: firstname || data.dataValues.firstname,
