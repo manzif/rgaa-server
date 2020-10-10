@@ -1,5 +1,6 @@
 import model from '../db/models';
-
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 const { Member } = model;
 
 class MemberManager {
@@ -83,6 +84,19 @@ class MemberManager {
 
     static async addMember(req, res) {
         const { name, type, website, owner, email, phonenumber, address } = req.body
+        const output = `
+                    <p>A new Member has Joined Rwanda Gaming Assiociation</p>
+                    <h3>Member details</h3>
+                    <ul>
+                        <li>Company Name: ${name}</li>
+                        <li>Company Type :${type}</li>
+                        <li>Company Address : ${address}</li>
+                        <li>Company website : ${website}</li>
+                        <li>Title : ${owner}</li>
+                        <li>Email : ${email}</li>
+                        <li>Phone Number : ${phonenumber}</li>
+                    </ul>
+                `;
 
         try {
             const findMember = await Member.findOne({
@@ -93,6 +107,36 @@ class MemberManager {
                     message: 'Member already exists.'
                 });
             }
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                // secure: true,
+                service: 'gmail',
+                auth: {
+                    type: "login",
+                    user: process.env.HOST_EMAIL,
+                    pass: process.env.HOST_PASSWORD,
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+
+            // send mail with defined transport object
+            let mailOptions = {
+                from: '"RGAA website" <mobicashmantis@gmail.com>',
+                to: "clement.mbabazi5@gmail.com",
+                subject: "A new Member has joined RGAA",
+                html: output
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return console.log(error)
+                }
+                console.log("Message sent: %s", info.messageId);
+                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            });
             await Member
                 .create({
                     name,
