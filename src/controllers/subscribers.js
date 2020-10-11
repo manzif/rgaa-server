@@ -1,5 +1,7 @@
 import model from '../db/models';
 import Helper from '../helper/helper';
+import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 
 const { Subscriber } = model;
 
@@ -36,6 +38,14 @@ class SubscriberManager {
 
     static async addSubscriber(req, res) {
         const { email } = req.body
+        const output = `
+                    <p>A new subscriber has joined Rwanda Gaming Assiociation Website</p>
+                    <h3>Subscriber Contact details</h3>
+                    <ul>
+                        <li>Email : ${email}</li>
+                    </ul>
+                `;
+
         if (!Helper.isValidEmail(email)) {
             return res.status(400).send({ 'message': 'Please enter a valid email address' });
         }
@@ -49,6 +59,36 @@ class SubscriberManager {
                     message: 'Subscriber already exists.'
                 });
             }
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                // secure: true,
+                service: 'gmail',
+                auth: {
+                    type: "login",
+                    user: process.env.HOST_EMAIL,
+                    pass: process.env.HOST_PASSWORD,
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+
+            // send mail with defined transport object
+            let mailOptions = {
+                from: '"RGAA website" <mobicashmantis@gmail.com>',
+                to: "rwandagamingassociation@gmail.com",
+                subject: "A new subscriber has joined RGAA Website",
+                html: output
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return console.log(error)
+                }
+                console.log("Message sent: %s", info.messageId);
+                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            });
             await Subscriber
                 .create({
                     email

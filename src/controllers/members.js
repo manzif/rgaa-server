@@ -125,7 +125,7 @@ class MemberManager {
             // send mail with defined transport object
             let mailOptions = {
                 from: '"RGAA website" <mobicashmantis@gmail.com>',
-                to: "clement.mbabazi5@gmail.com",
+                to: "rwandagamingassociation@gmail.com",
                 subject: "A new Member has joined RGAA",
                 html: output
             };

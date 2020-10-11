@@ -1,4 +1,6 @@
 import model from '../db/models';
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 
 const { Contact } = model;
 
@@ -59,7 +61,50 @@ class ContactManager {
     static async addContact(req, res) {
         const { name, email, subject, message } = req.body
 
+        const output = `
+                    <p>A new message from Rwanda Gaming Assiociation Website</p>
+                    <h3>Send Contact details</h3>
+                    <ul>
+                        <li>Name: ${name}</li>
+                        <li>Email : ${email}</li>
+                    </ul>
+                    <h3>Subject</h3>
+                    <p>${subject}</p>
+                    <h3>Message</h3>
+                    <p>${message}</p>
+                `;
+
         try {
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 465,
+                // secure: true,
+                service: 'gmail',
+                auth: {
+                    type: "login",
+                    user: process.env.HOST_EMAIL,
+                    pass: process.env.HOST_PASSWORD,
+                },
+                tls: {
+                    rejectUnauthorized: false
+                }
+            });
+
+            // send mail with defined transport object
+            let mailOptions = {
+                from: '"RGAA website" <mobicashmantis@gmail.com>',
+                to: "rwandagamingassociation@gmail.com",
+                subject: "A new message from RGAA Website",
+                html: output
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return console.log(error)
+                }
+                console.log("Message sent: %s", info.messageId);
+                console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            });
             await Contact
                 .create({
                     name,
