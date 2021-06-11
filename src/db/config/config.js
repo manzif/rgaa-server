@@ -24,7 +24,13 @@ const config = {
     database: process.env.DATABASE_NAME,
     host: process.env.DATABASE_HOST,
     dialect: 'postgres',
-    operatorsAliases: false
+    operatorsAliases: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   }
 };
 
