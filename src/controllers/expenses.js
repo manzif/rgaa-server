@@ -1,17 +1,24 @@
 import model from '../db/models';
 import dotenv from 'dotenv';
 
-const { Expense } = model;
+const { expenseData } = model;
 
 class ExpenseManager {
 
     static async viewExpense(req, res) {
+        let totalCost = 0
         try {
-            const expense = await Expense.findOne({ where: { id: req.params.id } });
-            if (expense) {
-                return res.status(200).json({
-                    expense: expense
-                });
+            // const header = req.headers['authorization'];
+            // const bearer = header.split(' ');
+            // const token = bearer[1];
+            // req.token = token;
+            // const { id } = await Helper.verifyToken(token);
+            const findExpenses = await expenseData.findAll({ where: { userId: req.params.id } });
+            if (findExpenses) {
+                findExpenses.map((item) => {
+                    totalCost = totalCost + item.price
+                })
+                return res.status(200).json({ total: findExpenses.length, totalSpent: totalCost, expenses: findExpenses });
             }
             return res.status(404).json({
                 message: 'Expense does not exist'
@@ -27,7 +34,7 @@ class ExpenseManager {
 
     static async updateExpense(req, res) {
         try {
-            const data = await Expense.findOne({ where: { id: req.params.id } });
+            const data = await expenseData.findOne({ where: { id: req.params.id } });
             const updated = await data.update({
                 title: req.body.title || data.dataValues.title,
                 price: req.body.price || data.dataValues.price,
@@ -47,7 +54,7 @@ class ExpenseManager {
     static async getAllExpenses(req, res) {
         let totalCost = 0
         try {
-            const findExpenses = await Expense.findAll();
+            const findExpenses = await expenseData.findAll();
             if (findExpenses) {
                 findExpenses.map((item) => {
                     totalCost = totalCost + item.price
@@ -61,14 +68,15 @@ class ExpenseManager {
     }
 
     static async addExpense(req, res) {
-        const { title, price, date } = req.body
+        const { title, price, date, userId } = req.body
 
         try {
-            await Expense
+            await expenseData
                 .create({
                     title,
                     price,
-                    date
+                    date,
+                    userId
                 })
             return res.status(201).send({ response: 'Expense successfully added', title, price, date });
         } catch (error) {
@@ -82,9 +90,9 @@ class ExpenseManager {
     static async deleteExpense(req, res) {
         try {
             const id = req.params.id
-            const expense = await Expense.findOne({ where: { id } });
+            const expense = await expenseData.findOne({ where: { id } });
             if (expense) {
-                await Expense.destroy({ where: { id } })
+                await expenseData.destroy({ where: { id } })
                 return res.status(200).json({
                     message: 'Expense deleted successfuly'
                 });

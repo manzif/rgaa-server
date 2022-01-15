@@ -3,6 +3,7 @@ import users  from './users';
 import members from './member';
 import contacts from './contacts';
 import expenses from './expenses';
+import expenseUser from './expenseUser';
 import subscribers from './subscribers';
 import manzis from './manzi';
 
@@ -14,5 +15,6 @@ router.use('/api/contacts', contacts);
 router.use('/api/subscribers', subscribers);
 router.use('/api/manzis', manzis);
 router.use('/api/expenses', expenses);
+router.use('/api/expense', expenseUser);
 
 export default router;

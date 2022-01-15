@@ -36,5 +36,28 @@ class VerifyUser {
         }  
     }
   }
+
+  static async isOwner(req, res, next) {
+    try {
+
+      const header = req.headers['authorization'];
+      const bearer = header.split(' ');
+      const token = bearer[1];
+      req.token = token;
+
+      const { id } = await Helper.verifyToken(token);
+          
+      if (id !== req.params.id ) {
+          return res.status(403).json({
+            message: 'Forbidden access'
+        });
+      }
+    next();
+    } catch (error) {
+      return res.status(400).json({
+        message: error.message
+      });
+    }
+  }
 }
 export default VerifyUser;
